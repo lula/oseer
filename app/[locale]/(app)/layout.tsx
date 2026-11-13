@@ -10,6 +10,11 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { NavUser } from "@/components/nav-user";
 import { requireUser } from "@/lib/session";
+import {
+  BreadcrumbProvider,
+  PageBreadcrumb,
+} from "@/components/page-breadcrumn";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export default async function RootLayout({
   children,
@@ -32,15 +37,18 @@ export default async function RootLayout({
       <SidebarInset>
         {/* Pages name their level of the breadcrumb (<BreadcrumbLabel>). */}
 
-        <header className="flex h-16 shrink-0 items-center gap-2 px-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator
-            orientation="vertical"
-            className="mr-2 data-vertical:h-4 data-vertical:self-auto"
-          />
-
+        <BreadcrumbProvider>
+          <header className="flex h-16 shrink-0 items-center gap-2 px-4">
+            <SidebarTrigger className="-ml-1" />
+            <Separator
+              orientation="vertical"
+              className="mr-2 data-vertical:h-4 data-vertical:self-auto"
+            />
+            <PageBreadcrumb />
+            <ThemeToggle className="ml-auto" />
+          </header>
           <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
-        </header>
+        </BreadcrumbProvider>
       </SidebarInset>
     </SidebarProvider>
   );
