@@ -28,12 +28,12 @@ import {
 import {
   containsUrl,
   findActiveUrl,
-  isNavGroup,
-  type NavGroup,
-  type NavItem,
-  type NavLeaf,
-  type NavNode,
-} from "@/lib/nav-items"
+  isNavTreeGroup,
+  type NavTreeGroup,
+  type NavTreeItem,
+  type NavTreeLeaf,
+  type NavTreeNode,
+} from "@/lib/navigation"
 
 /** Active page uses the primary color (also on hover), icon included. */
 const ACTIVE_CLASSES =
@@ -78,7 +78,7 @@ function NavSidebar({
   linkComponent = "a",
   ...props
 }: Omit<React.ComponentProps<typeof Sidebar>, "collapsible" | "children"> & {
-  items?: NavItem[]
+  items?: NavTreeItem[]
   /** The current path, for the active item of `items`. */
   pathname?: string | null
   header?: React.ReactNode
@@ -131,7 +131,7 @@ function NavSidebarItems({
   items,
   pathname,
 }: {
-  items: NavItem[]
+  items: NavTreeItem[]
   pathname?: string | null
 }) {
   const activeUrl = findActiveUrl(items, pathname)
@@ -145,7 +145,7 @@ function NavSidebarItems({
   ))
 }
 
-interface NodeProps<T extends NavNode = NavNode> {
+interface NodeProps<T extends NavTreeNode = NavTreeNode> {
   item: T
   /** 1 for top-level items. */
   depth: number
@@ -153,14 +153,14 @@ interface NodeProps<T extends NavNode = NavNode> {
 }
 
 function NavSidebarNode({ item, ...props }: NodeProps) {
-  return isNavGroup(item) ? (
+  return isNavTreeGroup(item) ? (
     <NavSidebarGroup item={item} {...props} />
   ) : (
     <NavSidebarLeaf item={item} {...props} />
   )
 }
 
-function NavSidebarChildren({ item, depth, activeUrl }: NodeProps<NavGroup<NavNode>>) {
+function NavSidebarChildren({ item, depth, activeUrl }: NodeProps<NavTreeGroup<NavTreeNode>>) {
   return item.children.map((child, index) => (
     <NavSidebarNode
       key={child.url ?? `${index}:${child.label}`}
@@ -172,7 +172,7 @@ function NavSidebarChildren({ item, depth, activeUrl }: NodeProps<NavGroup<NavNo
 }
 
 /** The item's icon; in the rail, its first letter when it has none. */
-function NavSidebarIcon({ item, rail }: { item: NavNode; rail: boolean }) {
+function NavSidebarIcon({ item, rail }: { item: NavTreeNode; rail: boolean }) {
   if (item.icon) {
     return <item.icon />
   }
@@ -189,7 +189,7 @@ function NavSidebarIcon({ item, rail }: { item: NavNode; rail: boolean }) {
   )
 }
 
-function NavSidebarLeaf({ item, depth, activeUrl }: NodeProps<NavLeaf>) {
+function NavSidebarLeaf({ item, depth, activeUrl }: NodeProps<NavTreeLeaf>) {
   const { Link, closeOnMobile } = React.useContext(NavContext)
   const isRail = useIsRail()
   const link = <Link href={item.url} onClick={closeOnMobile} />
@@ -229,7 +229,7 @@ function NavSidebarGroup({
   item,
   depth,
   activeUrl,
-}: NodeProps<NavGroup<NavNode>>) {
+}: NodeProps<NavTreeGroup<NavTreeNode>>) {
   const { Link, closeOnMobile } = React.useContext(NavContext)
   const isRail = useIsRail()
   const holdsActive = containsUrl(item, activeUrl)
@@ -260,7 +260,7 @@ function NavSidebarGroup({
   // it don't show: their pages are listed directly, so boxes never nest.
   if (isRail) {
     const pages = item.children.flatMap((child) =>
-      isNavGroup(child) ? child.children : [child]
+      isNavTreeGroup(child) ? child.children : [child]
     )
     return (
       <Collapsible

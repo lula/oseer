@@ -15,8 +15,11 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "./ui/sidebar";
-import { isNavGroup, NAV_SECTIONS } from "@/lib/navigation";
-import { type NavItem } from "@/lib/nav-items";
+import {
+  isNavGroup,
+  NAV_SECTIONS,
+  type NavTreeItem,
+} from "@/lib/navigation";
 
 /**
  * Floating sidebar with sections and their pages, minimizing to an icon
@@ -94,7 +97,7 @@ function Sections({
   pathname: string | null;
 }) {
   const t = useTranslations("nav");
-  const items: NavItem[] = NAV_SECTIONS.filter(
+  const items: NavTreeItem[] = NAV_SECTIONS.filter(
     (section) => !section.hidden && !!section.adminOnly === admin,
   ).map((section) => ({
     label: t(section.title),

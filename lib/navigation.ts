@@ -1,9 +1,12 @@
-import type { MessageKeys, Messages, NestedKeyOf } from "next-intl";
+import { type MessageKeys, type Messages, type NestedKeyOf } from "next-intl";
 import {
+  DatabaseZapIcon,
+  Grid2X2PlusIcon,
   HouseIcon,
   LayoutDashboardIcon,
   type LucideIcon,
 } from "lucide-react";
+import type { ComponentType } from "react";
 
 /**
  * A title: a key of the `nav` messages, translated where it's shown.
@@ -50,16 +53,25 @@ export const NAV_SECTIONS: NavSection[] = [
     icon: HouseIcon,
     items: [{ title: "dashboard", href: "/", icon: LayoutDashboardIcon }],
   },
+  {
+    title: 'tableDesigner.title',
+    href: ".",
+    icon: DatabaseZapIcon,
+    items: [{ title: 'tableDesigner.design', href: "/table-designer", icon: Grid2X2PlusIcon }],
+    adminOnly: true
+  }
 ];
 
 export function isNavGroup(item: NavItem | NavGroup): item is NavGroup {
   return "items" in item;
 }
 
-function matches(item: NavItem, pathname: string) {
-  return item.href === "/"
-    ? pathname === "/"
-    : pathname === item.href || pathname.startsWith(`${item.href}/`);
+/** Whether a path is the url or below it. "/" only matches itself. */
+function matches(url: string, pathname: string) {
+  if (url === "/") {
+    return pathname === "/";
+  }
+  return pathname === url || pathname.startsWith(`${url}/`);
 }
 
 /**
@@ -72,16 +84,105 @@ export function findNavItem(
   for (const section of NAV_SECTIONS) {
     for (const entry of section.items) {
       if (!isNavGroup(entry)) {
-        if (matches(entry, pathname)) {
+        if (matches(entry.href, pathname)) {
           return { section, item: entry };
         }
         continue;
       }
-      const item = entry.items.find((page) => matches(page, pathname));
+      const item = entry.items.find((page) => matches(page.href, pathname));
       if (item) {
         return { section, group: entry, item };
       }
     }
   }
   return undefined;
+}
+
+/*
+ * The sidebar tree drawn by `ui/nav-sidebar.tsx`: NAV_SECTIONS with the
+ * titles already translated (see `components/app-sidebar.tsx`).
+ */
+
+/** An icon component (e.g. from lucide-react). */
+export type NavTreeIcon = ComponentType<{ className?: string }>;
+
+/** A page: always has a url. */
+export interface NavTreeLeaf {
+  label: string;
+  url: string;
+  icon?: NavTreeIcon;
+  children?: never;
+}
+
+/** A collapsible group; its url, if any, makes the label a link. */
+export interface NavTreeGroup<Child> {
+  label: string;
+  url?: string;
+  icon?: NavTreeIcon;
+  /** Open on first render (default true). Always opens on the active page. */
+  defaultOpen?: boolean;
+  children: Child[];
+}
+
+type NavTreeLevel3 = NavTreeLeaf;
+type NavTreeLevel2 = NavTreeLeaf | NavTreeGroup<NavTreeLevel3>;
+/** A sidebar item: at most 3 levels (group → group → leaf). */
+export type NavTreeItem = NavTreeLeaf | NavTreeGroup<NavTreeLevel2>;
+
+/** Any node of the tree, whatever its level. */
+export type NavTreeNode = NavTreeLeaf | NavTreeGroup<NavTreeNode>;
+
+export function isNavTreeGroup(item: NavTreeNode): item is NavTreeGroup<NavTreeNode> {
+  return Array.isArray(item.children);
+}
+
+function* urls(items: readonly NavTreeNode[]): Generator<string> {
+  for (const item of items) {
+    if (item.url) {
+      yield item.url;
+    }
+    if (isNavTreeGroup(item)) {
+      yield* urls(item.children);
+    }
+  }
+}
+
+/**
+ * The url of the active item for a path: the most specific match
+ * ("/admin/users/1" picks "/admin/users" over "/admin"). "/" only matches
+ * itself.
+ */
+export function findActiveUrl(
+  items: readonly NavTreeNode[],
+  pathname: string | null | undefined,
+): string | undefined {
+  if (!pathname) {
+    return undefined;
+  }
+  let best: string | undefined;
+  for (const url of urls(items)) {
+    if (matches(url, pathname) && (!best || url.length > best.length)) {
+      best = url;
+    }
+  }
+  return best;
+}
+
+/** Whether a group's descendants (not the group itself) include the url. */
+export function containsUrl(
+  group: NavTreeGroup<NavTreeNode>,
+  url: string | undefined,
+): boolean {
+  if (!url) {
+    return false;
+  }
+  for (const child of group.children) {
+    if (child.url === url) {
+      return true;
+    }
+    if (isNavTreeGroup(child) && containsUrl(child, url)) {
+      return true;
+    }
+  }
+  return false;
 }

@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import type { User } from "./auth-client";
+import { adminClient } from "better-auth/client/plugins";
 // import { authPlugins } from "./plugins";
 
 export interface SessionHelpersOptions {
@@ -26,7 +27,7 @@ export function createSessionHelpers({
   // Calls the backend directly, forwarding the browser's cookies.
   const serverAuthClient = createAuthClient({
     baseURL: backendUrl,
-    // plugins: authPlugins(),
+    plugins: [adminClient()],
   });
 
   /**

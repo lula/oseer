@@ -5,11 +5,11 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { CSSProperties, Suspense } from "react";
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar, NavSections } from "@/components/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { NavUser } from "@/components/nav-user";
-import { requireUser } from "@/lib/session";
+import { getCurrentUser, isAdmin, requireUser } from "@/lib/session";
 import {
   BreadcrumbProvider,
   PageBreadcrumb,
@@ -22,11 +22,11 @@ export default async function RootLayout({
   return (
     <SidebarProvider style={{ "--sidebar-width": "19rem" } as CSSProperties}>
       <AppSidebar
-        // adminNav={
-        //   <Suspense fallback={null}>
-        //     <AdminNav />
-        //   </Suspense>
-        // }
+        adminNav={
+          <Suspense fallback={null}>
+            <AdminNav />
+          </Suspense>
+        }
         footer={
           //The session is read per request, so the user streams in behind a boundary.
           <Suspense fallback={<UserSkeleton />}>
@@ -70,4 +70,12 @@ function UserSkeleton() {
 async function SidebarUser() {
   const { name, email, image } = await requireUser();
   return <NavUser user={{ name, email, image }} />;
+}
+
+/** Admin-only sidebar sections; nothing for other users. */
+async function AdminNav() {
+  if (!isAdmin(await getCurrentUser())) {
+    return null;
+  }
+  return <NavSections admin />;
 }

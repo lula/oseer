@@ -45,6 +45,7 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Skip Next internals and static files.
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)"],
+  // Skip Next internals and static files. Also skip uploads: the proxy would
+  // buffer the whole body (10 MB limit); the route checks the session itself.
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|api/uploads|.*\\..*).*)"],
 };

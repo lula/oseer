@@ -1,5 +1,4 @@
 import { isAPIError } from "better-auth/api";
-import { authClient } from "./lib/auth-client";
 
 export async function registerNode() {
   // better-sqlite3 is a native Node addon: keep it out of the Edge bundle.
@@ -11,11 +10,12 @@ export async function registerNode() {
     await runMigrations();
 
     try {
-      await auth.api.signUpEmail({
+      await auth.api.createUser({
         body: {
           email: process.env.ADMIN_EMAIL!,
           password: process.env.ADMIN_PASSWORD!,
           name: process.env.ADMIN_NAME!,
+          role: "admin"
         }
       })
       console.log(`- Admin user ${process.env.ADMIN_EMAIL} created`);

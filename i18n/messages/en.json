@@ -10,7 +10,11 @@
   "nav": {
     "tagline": "A simple analytics app",
     "home": "Home",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "tableDesigner": {
+      "title": "Table designer",
+      "design": "Design"
+    }
   },
   "auth": {
     "fields": {
@@ -78,5 +82,26 @@
     "serverError": "Something went wrong",
     "hasErrors": "Form has errors!",
     "pickDate": "Pick a date"
+  },
+  "uploader": {
+    "title": "Drag and drop files here",
+    "drop": "Drop to upload",
+    "browse": "Browse files",
+    "files": "Uploaded files",
+    "hintTypes": "Accepted: {types}",
+    "hintSize": "Up to {max} each",
+    "rejectedType": "{name}: this file type isn't accepted.",
+    "rejectedSize": "{name}: larger than {max}.",
+    "rejectedCount": "{name}: you can upload at most {max} files.",
+    "failed": "Upload failed",
+    "retry": "Retry",
+    "cancel": "Cancel upload",
+    "remove": "Remove"
+  },
+  "home": {
+    "title": "Home"
+  },
+  "tableDesigner": {
+    "title": "Table designer"
   }
 }
