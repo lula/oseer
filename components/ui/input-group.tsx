@@ -7,6 +7,7 @@ import { cn } from "cn"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { SelectTrigger } from "./select"
 
 function InputGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -148,6 +149,22 @@ function InputGroupTextarea({
   )
 }
 
+function InputGroupSelectTrigger({
+  className,
+  ...props
+}: React.ComponentProps<typeof SelectTrigger>) {
+  return (
+    <SelectTrigger
+      data-slot="input-group-control"
+      className={cn(
+        "h-full w-full min-w-0 flex-1 rounded-none border-0 bg-transparent shadow-none ring-0 focus-visible:ring-0 disabled:bg-transparent aria-invalid:ring-0 data-[size=default]:h-full dark:bg-transparent dark:hover:bg-transparent dark:disabled:bg-transparent group-has-[>[data-align=inline-start]]/input-group:pl-1.5 group-has-[>[data-align=inline-end]]/input-group:pr-1.5",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
 export {
   InputGroup,
   InputGroupAddon,
@@ -155,4 +172,5 @@ export {
   InputGroupText,
   InputGroupInput,
   InputGroupTextarea,
+  InputGroupSelectTrigger,
 }

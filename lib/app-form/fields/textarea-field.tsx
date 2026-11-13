@@ -1,0 +1,53 @@
+'use client'
+
+import { Field, FieldError, FieldLabel } from '@/components/ui/field'
+import { Textarea } from '@/components/ui/textarea'
+import React from 'react'
+import { useFieldContext } from '../form-context.ts'
+import type { BaseFieldProps, OwnProps } from './base.ts'
+import { useErrorText } from './error-text.ts'
+import { InputGroup, InputGroupTextarea } from '@/components/ui/input-group'
+
+/** A multi-line text input; the field's value is a string ("" when blank). */
+export function TextareaField({
+  label,
+  className,
+  controlClassName,
+  orientation,
+  children,
+  ...props
+}: BaseFieldProps & Omit<React.ComponentProps<typeof Textarea>, OwnProps>) {
+  const field = useFieldContext<string>()
+  const errorText = useErrorText()
+
+  return (
+    <Field
+      className={className}
+      orientation={orientation}
+      data-invalid={!field.state.meta.isValid}
+    >
+      <FieldLabel htmlFor={field.name} className={'text-nowrap'}>
+        {label}
+      </FieldLabel>
+      <InputGroup>
+        <InputGroupTextarea
+          id={field.name}
+          className={controlClassName}
+          name={field.name}
+          value={field.state.value ?? ''}
+          aria-invalid={!field.state.meta.isValid}
+          onBlur={field.handleBlur}
+          onChange={(e) => field.handleChange(e.target.value)}
+          {...props}
+        />
+        {children}
+      </InputGroup>
+      <FieldError>
+        {field.state.meta.errors.length > 0 &&
+          [...new Set(errorText(field.state.meta.errors))].map(
+            (message, i) => <p key={i}>{message}</p>
+          )}
+      </FieldError>
+    </Field>
+  )
+}

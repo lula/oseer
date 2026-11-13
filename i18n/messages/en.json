@@ -1,7 +1,82 @@
 {
+  "meta": "Open Seer",
+  "account": {
+    "menu": {
+      "label": "Account menu",
+      "language": "Language",
+      "signOut": "Sign out"
+    }
+  },
   "nav": {
     "tagline": "A simple analytics app",
     "home": "Home",
     "dashboard": "Dashboard"
+  },
+  "auth": {
+    "fields": {
+      "email": "Email",
+      "emailPlaceholder": "you@example.com",
+      "password": "Password",
+      "rememberMe": "Remember me",
+      "firstname": "First name",
+      "lastname": "Last name"
+    },
+    "validation": {
+      "email": "Enter a valid email address",
+      "password": "Enter your password",
+      "firstname": "Enter your first name",
+      "lastname": "Enter your last name",
+      "passwordRules": "Password must contain minimum 8 characters, at least one uppercase letter, one lowercase letter, one number and one special character"
+    },
+    "errors": {
+      "invalidCredentials": "Invalid email or password.",
+      "tooManyAttempts": "Too many attempts. Please wait a moment and try again.",
+      "userExists": "An account with this email already exists.",
+      "invalidAvatar": "This image can't be used. Pick a PNG, JPEG or WebP image."
+    },
+    "signIn": {
+      "meta": "Sign in",
+      "title": "Sign in with your account",
+      "description": "Enter your email and password to continue.",
+      "noAccount": "No account yet?",
+      "signUp": "Sign up",
+      "submit": "Sign in"
+    },
+    "signUp": {
+      "meta": "Sign up",
+      "title": "Create your account",
+      "description": "It only takes a minute.",
+      "haveAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "submit": "Create account"
+    },
+    "verify": {
+      "meta": "Verify your email",
+      "checkInbox": "Check your inbox",
+      "sentTo": "We sent a verification link to <email></email>. Click it to activate your account and sign in.",
+      "yourEmail": "your email address",
+      "resent": "A new link is on its way.",
+      "sending": "Sending…",
+      "resend": "Resend email",
+      "expired": "This link has expired",
+      "broken": "This link doesn't work",
+      "signInForNewLink": "Sign in with your email and password and we'll send you a new verification link.",
+      "signIn": "Sign in",
+      "backToSignIn": "Back to sign in"
+    }
+  },
+  "theme": {
+    "change": "Change theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "form": {
+    "hidePassword": "Hide password",
+    "showPassword": "Show password",
+    "timeOf": "{label} (time)",
+    "serverError": "Something went wrong",
+    "hasErrors": "Form has errors!",
+    "pickDate": "Pick a date"
   }
 }
