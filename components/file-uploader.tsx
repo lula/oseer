@@ -34,7 +34,7 @@ import { Spinner } from "@/components/ui/spinner";
 export type UploadFn = (
   file: File,
   options: { onProgress: (percent: number) => void; signal: AbortSignal },
-) => Promise<void>;
+) => Promise<unknown>;
 
 type UploadState = "uploading" | "error" | "done";
 
@@ -59,8 +59,8 @@ export interface FileUploaderProps {
   multiple?: boolean;
   disabled?: boolean;
   className?: string;
-  /** Called after each file uploads successfully. */
-  onUploaded?: (file: File) => void;
+  /** Called after each file uploads, with what `upload` resolved to. */
+  onUploaded?: (file: File, result: unknown) => void;
 }
 
 export function FileUploader({
@@ -92,12 +92,12 @@ export function FileUploader({
       const controller = new AbortController();
       patch(id, { state: "uploading", progress: 0, error: undefined, controller });
       try {
-        await upload(file, {
+        const result = await upload(file, {
           signal: controller.signal,
           onProgress: (progress) => patch(id, { progress }),
         });
         patch(id, { state: "done", progress: 100, controller: undefined });
-        onUploaded?.(file);
+        onUploaded?.(file, result);
       } catch (error) {
         if (controller.signal.aborted) return;
         patch(id, {
@@ -286,8 +286,9 @@ export function FileUploader({
 
 /**
  * Uploads with XMLHttpRequest (fetch can't report upload progress) as
- * multipart form data, field name `file`. Non-2xx responses reject with the
- * JSON `error` message if there is one.
+ * multipart form data, field name `file`. Resolves with the JSON response
+ * (or text). Non-2xx responses reject with the JSON `error` message if there
+ * is one.
  */
 export function xhrUpload(url: string, field = "file"): UploadFn {
   return (file, { onProgress, signal }) =>
@@ -298,7 +299,13 @@ export function xhrUpload(url: string, field = "file"): UploadFn {
         if (event.lengthComputable) onProgress((event.loaded / event.total) * 100);
       };
       xhr.onload = () => {
-        if (xhr.status >= 200 && xhr.status < 300) return resolve();
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            return resolve(JSON.parse(xhr.responseText));
+          } catch {
+            return resolve(xhr.responseText);
+          }
+        }
         let message = `${xhr.status} ${xhr.statusText}`;
         try {
           message = JSON.parse(xhr.responseText).error ?? message;

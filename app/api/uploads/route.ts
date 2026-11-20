@@ -3,8 +3,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { getCurrentUser } from "@/lib/session";
 import { MAX_UPLOAD_BYTES } from "@/lib/uploads";
-
-const UPLOAD_DIR = path.join(process.cwd(), "data", "uploads");
+import { UPLOAD_DIR } from "@/lib/uploads.server";
 
 /** Saves one file (multipart field `file`) to data/uploads/. */
 export async function POST(request: Request) {

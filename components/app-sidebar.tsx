@@ -1,25 +1,19 @@
 "use client";
 
-import { SparklesIcon } from "lucide-react";
+import { DatabaseIcon, SparklesIcon, TableIcon } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
-import {
-  NavSidebar,
-  NavSidebarItems,
-} from "./ui/nav-sidebar";
+import { NavSidebar, NavSidebarItems } from "./ui/nav-sidebar";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from "./ui/sidebar";
-import {
-  isNavGroup,
-  NAV_SECTIONS,
-  type NavTreeItem,
-} from "@/lib/navigation";
+import { isNavGroup, NAV_SECTIONS, type NavTreeItem } from "@/lib/navigation";
+import { ImportedTable } from "@/lib/user-tables";
 
 /**
  * Floating sidebar with sections and their pages, minimizing to an icon
@@ -29,13 +23,16 @@ import {
 export function AppSidebar({
   footer,
   adminNav,
+  tables,
 }: {
   footer: ReactNode;
   adminNav?: ReactNode;
+  tables?: ImportedTable[];
 }) {
   return (
     <NavSidebar rail linkComponent={Link} header={<Brand />} footer={footer}>
       <NavSections />
+      <NavTablesSections tables={tables} />
       {adminNav}
     </NavSidebar>
   );
@@ -85,6 +82,14 @@ export function NavSections({ admin = false }: { admin?: boolean }) {
   );
 }
 
+export function NavTablesSections({ tables }: { tables?: ImportedTable[] }) {
+  return (
+    <Suspense>
+      <TableSections tables={tables} />
+    </Suspense>
+  );
+}
+
 function ActiveSections({ admin }: { admin: boolean }) {
   return <Sections admin={admin} pathname={usePathname()} />;
 }
@@ -117,4 +122,28 @@ function Sections({
     ),
   }));
   return <NavSidebarItems items={items} pathname={pathname} />;
+}
+
+function TableSections({
+  tables,
+}: {
+  tables?: ImportedTable[];
+}) {
+  const t = useTranslations("nav");
+
+  const items: NavTreeItem[] = [
+    {
+      label: t("tables"),
+      icon: DatabaseIcon,
+      children: tables
+        ? tables.map((table) => ({
+            label: table.tableName,
+            icon: TableIcon,
+            url: `/tables/${table.tableName}`,
+          }))
+        : [],
+    },
+  ];
+
+  return <NavSidebarItems items={items} pathname={usePathname()} />;
 }

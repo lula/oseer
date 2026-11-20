@@ -15,13 +15,16 @@ import {
   PageBreadcrumb,
 } from "@/components/page-breadcrumn";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { listImportedTables } from "@/lib/user-tables";
 
 export default async function RootLayout({
   children,
 }: LayoutProps<"/[locale]">) {
+  const tables = listImportedTables();
   return (
     <SidebarProvider style={{ "--sidebar-width": "19rem" } as CSSProperties}>
       <AppSidebar
+        tables={tables}
         adminNav={
           <Suspense fallback={null}>
             <AdminNav />
@@ -34,7 +37,9 @@ export default async function RootLayout({
           </Suspense>
         }
       />
-      <SidebarInset>
+      {/* min-w-0: a flex item won't shrink below its content otherwise, so a
+          wide table would widen the page instead of scrolling inside it. */}
+      <SidebarInset className="min-w-0">
         {/* Pages name their level of the breadcrumb (<BreadcrumbLabel>). */}
 
         <BreadcrumbProvider>

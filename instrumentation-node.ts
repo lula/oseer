@@ -9,6 +9,10 @@ export async function registerNode() {
     const { runMigrations } = await getMigrations(auth.options);
     await runMigrations();
 
+    // Imported tables, and the record of who created them (_table_imports).
+    const { initTablesDb } = await import("./lib/user-tables");
+    initTablesDb();
+
     try {
       await auth.api.createUser({
         body: {

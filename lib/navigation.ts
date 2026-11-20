@@ -3,8 +3,10 @@ import {
   DatabaseZapIcon,
   Grid2X2PlusIcon,
   HouseIcon,
+  ImportIcon,
   LayoutDashboardIcon,
   type LucideIcon,
+  TablePropertiesIcon,
 } from "lucide-react";
 import type { ComponentType } from "react";
 
@@ -57,7 +59,11 @@ export const NAV_SECTIONS: NavSection[] = [
     title: 'tableDesigner.title',
     href: ".",
     icon: DatabaseZapIcon,
-    items: [{ title: 'tableDesigner.design', href: "/table-designer", icon: Grid2X2PlusIcon }],
+    items: [
+      { title: 'tableDesigner.design', href: "/table-designer/design", icon: Grid2X2PlusIcon },
+      { title: 'tableDesigner.tables', href: "/table-designer/tables", icon: TablePropertiesIcon },
+      { title: 'tableDesigner.import', href: "/table-designer/import", icon: ImportIcon },
+    ],
     adminOnly: true
   }
 ];
@@ -75,27 +81,29 @@ function matches(url: string, pathname: string) {
 }
 
 /**
- * The section, group (if the page is in one) and page for a path
- * ("/account/x" matches "/account").
+ * The section, group (if the page is in one) and page for a path: the most
+ * specific match ("/table-designer/tables" picks that page over
+ * "/table-designer"; "/account/x" matches "/account").
  */
 export function findNavItem(
   pathname: string,
 ): { section: NavSection; group?: NavGroup; item: NavItem } | undefined {
+  let best: { section: NavSection; group?: NavGroup; item: NavItem } | undefined;
+  const consider = (section: NavSection, item: NavItem, group?: NavGroup) => {
+    if (matches(item.href, pathname) && (!best || item.href.length > best.item.href.length)) {
+      best = { section, group, item };
+    }
+  };
   for (const section of NAV_SECTIONS) {
     for (const entry of section.items) {
-      if (!isNavGroup(entry)) {
-        if (matches(entry.href, pathname)) {
-          return { section, item: entry };
-        }
-        continue;
-      }
-      const item = entry.items.find((page) => matches(page.href, pathname));
-      if (item) {
-        return { section, group: entry, item };
+      if (isNavGroup(entry)) {
+        for (const item of entry.items) consider(section, item, entry);
+      } else {
+        consider(section, entry);
       }
     }
   }
-  return undefined;
+  return best;
 }
 
 /*

@@ -13,8 +13,11 @@
     "dashboard": "Dashboard",
     "tableDesigner": {
       "title": "Table designer",
-      "design": "Design"
-    }
+      "design": "Design",
+      "tables": "Tables",
+      "import": "Import data"
+    },
+    "tables": "Tables"
   },
   "auth": {
     "fields": {
@@ -102,6 +105,223 @@
     "title": "Home"
   },
   "tableDesigner": {
-    "title": "Table designer"
+    "title": "Table designer",
+    "design": "Design",
+    "preview": {
+      "summary": "Sheet “{sheet}” · {columns, plural, one {# column} other {# columns}} · {rows, plural, one {# row} other {# rows}}, showing the first {shown}",
+      "untitledColumn": "Column {n}",
+      "noRows": "The sheet has a header but no rows.",
+      "errorTitle": "Can't read this file",
+      "errorDescription": "{name} isn't a valid Excel (.xlsx) file, or it's damaged."
+    },
+    "create": {
+      "button": "Create database table",
+      "doneTitle": "Table “{table}” created",
+      "doneDescription": "{columns, plural, one {# column} other {# columns}} and {rows, plural, one {# row} other {# rows}} imported.",
+      "errorTitle": "The table wasn't created",
+      "errors": {
+        "forbidden": "Only administrators can create tables.",
+        "notFound": "The uploaded file is gone. Upload it again.",
+        "invalidFile": "The file can't be read as an Excel (.xlsx) file.",
+        "failed": "Something went wrong while creating the table. Try again.",
+        "noHeader": "The first sheet is empty: it needs a header row."
+      },
+      "untitledColumn": "Column {n}",
+      "key": {
+        "label": "Primary key",
+        "description": "Optional. Tick the column, or columns together, that identify each row. Every row must have them filled in, and no two rows the same values.",
+        "none": "No primary key: rows can repeat.",
+        "chosen": "Key: {columns}"
+      },
+      "keyErrorTitle": "{count, plural, one {# row doesn't} other {# rows don't}} fit this primary key",
+      "keyErrorDescription": "Choose other key columns, or fix these rows in the file and upload it again."
+    },
+    "keyProblems": {
+      "empty": "Row {row}: the key is empty",
+      "duplicate": "Row {row}: “{value}” is also in row {firstRow}",
+      "more": "…and {count} more."
+    },
+    "reading": "Reading the file…",
+    "steps": {
+      "1": {
+        "title": "Upload file",
+        "description": "An .xlsx with a header row"
+      },
+      "2": {
+        "title": "Preview",
+        "description": "The table it will become"
+      },
+      "3": {
+        "title": "Primary key",
+        "description": "Optional: what identifies a row"
+      },
+      "4": {
+        "title": "Create table",
+        "description": "Create it and import the rows"
+      },
+      "next": "Next",
+      "back": "Back"
+    },
+    "plan": {
+      "summary": "The first sheet becomes the table <name>{table}</name>, with {columns, plural, one {# column} other {# columns}} and {rows, plural, one {# row} other {# rows}}.",
+      "columnsTitle": "Columns",
+      "fileColumn": "Excel column",
+      "tableColumn": "Table column",
+      "type": "Type",
+      "types": {
+        "INTEGER": "Whole number",
+        "REAL": "Number",
+        "TEXT": "Text"
+      },
+      "untitled": "Column {n}",
+      "table": "Table",
+      "columns": "Columns",
+      "key": "Primary key",
+      "noKey": "None",
+      "rows": "Rows",
+      "source": "Source"
+    },
+    "after": {
+      "import": "Import more data into it",
+      "tables": "Show all tables",
+      "another": "Design another table"
+    }
+  },
+  "tables": {
+    "title": "Tables",
+    "description": "Tables created from uploaded Excel files.",
+    "deletedUser": "Deleted user",
+    "columns": {
+      "table": "Table",
+      "rows": "Rows",
+      "createdBy": "Created by",
+      "createdAt": "Created",
+      "actions": "Actions",
+      "lastImport": "Last import"
+    },
+    "empty": {
+      "title": "No tables yet",
+      "description": "Upload an Excel file in the table designer to create one.",
+      "action": "Open table designer"
+    },
+    "drop": {
+      "button": "Drop table {table}",
+      "title": "Drop table “{table}”?",
+      "description": "The table and its {rows, plural, one {# row} other {# rows}} will be deleted. This can't be undone.",
+      "cancel": "Cancel",
+      "confirm": "Drop table",
+      "errors": {
+        "forbidden": "Only administrators can drop tables.",
+        "notFound": "This table no longer exists. Reload the page.",
+        "failed": "Something went wrong. Try again."
+      }
+    },
+    "importCount": "{count, plural, one {# import} other {# imports}}",
+    "importInto": "Import data into {table}"
+  },
+  "importData": {
+    "title": "Import data",
+    "description": "Load an Excel file into a table created earlier. The file must have exactly the table's columns, in any order.",
+    "table": "Table",
+    "chooseTable": "Choose a table…",
+    "checking": "Checking the file against the table…",
+    "import": "Import into {table}",
+    "noTables": {
+      "title": "No tables yet",
+      "description": "Create a table from an Excel file first, then import more data into it here.",
+      "action": "Open table designer"
+    },
+    "mode": {
+      "label": "Existing rows",
+      "replace": "Replace",
+      "replaceDescription": "Delete the table's rows, then add the {rows, plural, one {# row} other {# rows}} from this file.",
+      "append": "Append",
+      "appendDescription": "Keep the table's rows and add the {rows, plural, one {# row} other {# rows}} from this file.",
+      "appendBlocked": "Not possible: {count, plural, one {# row has a key} other {# rows have keys}} already in the table.",
+      "upsert": "Upsert",
+      "upsertDescription": "Add rows with new keys and update the rows whose key is already in the table: {added, plural, one {# row} other {# rows}} will be added, {updated, plural, one {# row} other {# rows}} updated. Other rows stay as they are.",
+      "upsertNoKey": "Not possible: the table has no primary key to tell new rows from existing ones."
+    },
+    "done": {
+      "title": "Data imported into “{table}”",
+      "replace": "The table now holds the {rows, plural, one {# row} other {# rows}} from this file.",
+      "append": "{rows, plural, one {# row} other {# rows}} added.",
+      "upsert": "{added, plural, one {# row} other {# rows}} added, {updated, plural, one {# row} other {# rows}} updated."
+    },
+    "errorTitle": "The data wasn't imported",
+    "errors": {
+      "forbidden": "Only administrators can import data.",
+      "notFound": "The uploaded file is gone. Upload it again.",
+      "noTable": "This table no longer exists. Choose another one.",
+      "invalidFile": "The file can't be read as an Excel (.xlsx) file.",
+      "blocked": "The file doesn't fit the table anymore. Go back to the preview to see why.",
+      "failed": "Something went wrong. Try again.",
+      "existingKeys": "Some rows have keys already in the table. Use Replace, or remove those rows from the file."
+    },
+    "report": {
+      "ready": {
+        "title": "The file matches the table",
+        "description": "All {columns} columns of {table} are in the file, and its {rows, plural, one {# row fits} other {# rows fit}}."
+      },
+      "blocked": {
+        "title": "This file can't be uploaded into the table",
+        "columns": "Its columns aren't exactly the table's: {details}.",
+        "types": "{count, plural, one {# value doesn't} other {# values don't}} fit {count, plural, one {its column} other {their columns}}.",
+        "keys": "{count, plural, one {# row doesn't} other {# rows don't}} fit the primary key.",
+        "fix": "Fix the file and upload it again.",
+        "missing": "{count, plural, one {# missing} other {# missing}}",
+        "extra": "{count, plural, one {# not in the table} other {# not in the table}}"
+      },
+      "columnsTitle": "Columns",
+      "columns": {
+        "table": "Table column",
+        "type": "Type",
+        "file": "File column",
+        "status": "Status"
+      },
+      "types": {
+        "INTEGER": "Whole number",
+        "REAL": "Number",
+        "TEXT": "Text"
+      },
+      "status": {
+        "matched": "Found",
+        "missing": "Missing in file",
+        "extra": "Not in table"
+      },
+      "primaryKey": "Primary key",
+      "untitled": "Column {n}",
+      "typeProblems": {
+        "title": "{count, plural, one {# value doesn't fit its column} other {# values don't fit their columns}}",
+        "problem": "Row {row}, {column}: “{value}” isn't {expected, select, INTEGER {a whole number} REAL {a number} other {valid}}",
+        "more": "…and {count} more."
+      },
+      "keys": {
+        "title": "{count, plural, one {# row doesn't} other {# rows don't}} fit the table's primary key",
+        "description": "Rows are identified by {columns}: each must be filled in and unique."
+      }
+    },
+    "pickTableFirst": "Choose the table to import into.",
+    "steps": {
+      "1": {
+        "title": "Import file",
+        "description": "Choose the table and upload an .xlsx"
+      },
+      "2": {
+        "title": "Preview",
+        "description": "Check the columns and the data"
+      },
+      "3": {
+        "title": "Upload data",
+        "description": "Write the rows into the table"
+      },
+      "next": "Next",
+      "back": "Back",
+      "uploadAgain": "Upload another file",
+      "another": "Import another file"
+    },
+    "upload": {
+      "summary": "{rows, plural, one {# row} other {# rows}} from {file} will be written to {table}."
+    }
   }
 }
